@@ -2,8 +2,8 @@ name: sbip
 on:
   push:
     branches:
-      'dev/**'
-      'release/**'
+      - 'dev/**'
+      - 'release/**'
 jobs:
   push_to_registry:
     name: Push Docker image to Docker Hub
