@@ -8,6 +8,7 @@ package validation
 
 import (
 	"bytes"
+	"time"
 
 	"github.com/hyperledger/fabric-protos-go/common"
 	"github.com/hyperledger/fabric-protos-go/ledger/rwset"
@@ -22,6 +23,7 @@ import (
 	"github.com/hyperledger/fabric/internal/pkg/txflags"
 	"github.com/hyperledger/fabric/protoutil"
 	"github.com/pkg/errors"
+	"github.com/spf13/viper"
 )
 
 var logger = flogging.MustGetLogger("validation")
@@ -279,6 +281,12 @@ func preprocessProtoBlock(postOrderSimulatorProvider PostOrderSimulatorProvider,
 				containsPostOrderWrites: containsPostOrderWrites,
 			})
 		}
+
+		// The following simulates computation delay for this function if set
+		if viper.IsSet("simulation.transaction.delay") {
+			time.Sleep(viper.GetDuration("simulation.transaction.delay"))
+		}
+
 	}
 	return b, txsStatInfo, nil
 }

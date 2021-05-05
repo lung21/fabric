@@ -747,3 +747,16 @@ metrics:
 
         # prefix is prepended to all emitted statsd metrics
         prefix:
+
+###############################################################################
+#
+#    Simulation section
+#
+###############################################################################
+simulation:
+    # computation delay
+    transaction:
+        # MVCC validation
+        MVCCEnabled: false
+        # computation delay
+        delay: 100ms

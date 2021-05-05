@@ -33,6 +33,7 @@ import (
 	"github.com/hyperledger/fabric/internal/pkg/txflags"
 	"github.com/hyperledger/fabric/protoutil"
 	"github.com/pkg/errors"
+	"github.com/spf13/viper"
 )
 
 var logger = flogging.MustGetLogger("kvledger")
@@ -468,8 +469,14 @@ func (l *kvLedger) CommitLegacy(pvtdataAndBlock *ledger.BlockAndPvtData, commitO
 		pvtdataAndBlock.PvtData = convertTxPvtDataArrayToMap(txPvtData)
 	}
 
+	// Check if MVCC validation is set although MVCC is enabled by default.
+	mvccEnabled := true
+	if viper.IsSet("simulation.transaction.MVCCEnabled") {
+		mvccEnabled = viper.GetBool("simulation.transaction.MVCCEnabled")
+	}
+
 	logger.Debugf("[%s] Validating state for block [%d]", l.ledgerID, blockNo)
-	txstatsInfo, updateBatchBytes, err := l.txmgr.ValidateAndPrepare(pvtdataAndBlock, true)
+	txstatsInfo, updateBatchBytes, err := l.txmgr.ValidateAndPrepare(pvtdataAndBlock, mvccEnabled)
 	if err != nil {
 		return err
 	}
