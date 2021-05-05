@@ -7,7 +7,7 @@ WORKDIR $GOPATH/src/github.com/hyperledger/fabric
 FROM builder AS peer
 RUN make peer
 
-FROM alpine3.12
+FROM alpine:3.12
 ENV FABRIC_CFG_PATH /etc/hyperledger/fabric
 VOLUME /etc/hyperledger/fabric
 VOLUME /var/hyperledger
