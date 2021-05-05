@@ -9,6 +9,8 @@ jobs:
     name: Push Docker image to Docker Hub
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout Fabric repository
+        uses: actions/checkout@v2
       - name: Build and push to Docker Hub
         uses: docker/build-push-action@v1
         with:
