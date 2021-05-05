@@ -759,4 +759,4 @@ simulation:
         # MVCC validation
         MVCCEnabled: false
         # computation delay
-        delay: 100ms
+        delay: 10ms
