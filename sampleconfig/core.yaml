@@ -757,6 +757,6 @@ simulation:
     # computation delay
     transaction:
         # MVCC validation
-        MVCCEnabled: true
+        MVCCEnabled: false
         # computation delay
-        delay: 0.01s
+        delay:
