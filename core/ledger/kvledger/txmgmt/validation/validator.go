@@ -13,6 +13,7 @@ import (
 	"github.com/hyperledger/fabric/core/ledger/kvledger/txmgmt/privacyenabledstate"
 	"github.com/hyperledger/fabric/core/ledger/kvledger/txmgmt/rwsetutil"
 	"github.com/hyperledger/fabric/core/ledger/kvledger/txmgmt/statedb"
+	"github.com/spf13/viper"
 )
 
 // validator validates a tx against the latest committed state
@@ -124,6 +125,10 @@ func (v *validator) validateEndorserTX(
 	//mvcc validation, may invalidate transaction
 	if doMVCCValidation {
 		validationCode, err = v.validateTx(txRWSet, updates)
+		// If set, always set validationCode as TxValidationCode_VALID whether mvcc is enabled or not
+		if viper.IsSet("simulation.transaction.allValid") && viper.GetBool("simulation.transaction.allValid") {
+			validationCode = peer.TxValidationCode_VALID
+		}
 	}
 	return validationCode, err
 }
