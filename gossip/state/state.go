@@ -581,6 +581,9 @@ func (s *GossipStateProviderImpl) deliverPayloads() {
 					}
 					s.logger.Panicf("Cannot commit block to the ledger due to %+v", errors.WithStack(err))
 				}
+
+				milliTimestamp := time.Now().UnixNano() / int64(time.Millisecond)
+				s.logger.Infof("Finished committing block [%d] at Unix timestamp %dms\n", payload.SeqNum, milliTimestamp)
 			}
 		case <-s.stopCh:
 			s.logger.Debug("State provider has been stopped, finishing to push new blocks.")
