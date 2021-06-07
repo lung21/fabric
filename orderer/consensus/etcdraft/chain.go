@@ -10,10 +10,11 @@ import (
 	"context"
 	"encoding/pem"
 	"fmt"
-	"github.com/hyperledger/fabric/common/channelconfig"
 	"sync"
 	"sync/atomic"
 	"time"
+
+	"github.com/hyperledger/fabric/common/channelconfig"
 
 	"github.com/hyperledger/fabric/orderer/common/types"
 

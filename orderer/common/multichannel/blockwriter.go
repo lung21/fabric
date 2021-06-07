@@ -8,6 +8,7 @@ package multichannel
 
 import (
 	"sync"
+	"time"
 
 	"github.com/golang/protobuf/proto"
 	cb "github.com/hyperledger/fabric-protos-go/common"
@@ -168,6 +169,22 @@ func (bw *BlockWriter) WriteConfigBlock(block *cb.Block, encodedMetadataValue []
 func (bw *BlockWriter) WriteBlock(block *cb.Block, encodedMetadataValue []byte) {
 	bw.committingBlock.Lock()
 	bw.lastBlock = block
+
+	milliTimestamp := time.Now().UnixNano() / int64(time.Millisecond)
+	for _, encodedData := range block.Data.Data {
+
+		env, err := protoutil.UnmarshalEnvelope(encodedData)
+		if err != nil {
+			logger.Panic("Failed to unmarshal envelope from block data")
+		}
+
+		chdr, err := protoutil.ChannelHeader(env)
+		if err != nil {
+			logger.Panic("Failed to get channelHeader from envelope")
+		}
+
+		logger.Infof("Writing block with txid '%s' at Unix timestamp %dms", chdr.TxId, milliTimestamp)
+	}
 
 	go func() {
 		defer bw.committingBlock.Unlock()
