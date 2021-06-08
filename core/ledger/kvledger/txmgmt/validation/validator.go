@@ -92,6 +92,8 @@ func (v *validator) validateAndPrepareBatch(blk *block, doMVCCValidation bool) (
 	}
 
 	updates := newPubAndHashUpdates()
+	invalidCount := 0
+
 	for _, tx := range blk.txs {
 		var validationCode peer.TxValidationCode
 		var err error
@@ -109,8 +111,12 @@ func (v *validator) validateAndPrepareBatch(blk *block, doMVCCValidation bool) (
 		} else {
 			logger.Warningf("Block [%d] Transaction index [%d] TxId [%s] marked as invalid by state validator. Reason code [%s]",
 				blk.num, tx.indexInBlock, tx.id, validationCode.String())
+			invalidCount++
 		}
 	}
+
+	logger.Infof("Block [%d] has %d transactions marked as invalid", blk.num, invalidCount)
+
 	return updates, nil
 }
 

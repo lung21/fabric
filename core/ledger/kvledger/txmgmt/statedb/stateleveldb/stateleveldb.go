@@ -164,6 +164,7 @@ func (vdb *versionedDB) ExecuteQueryWithPagination(namespace, query, bookmark st
 func (vdb *versionedDB) ApplyUpdates(batch *statedb.UpdateBatch, height *version.Height) error {
 	dbBatch := vdb.db.NewUpdateBatch()
 	namespaces := batch.GetUpdatedNamespaces()
+	batchSize := 0
 	for _, ns := range namespaces {
 		updates := batch.GetUpdates(ns)
 		for k, vv := range updates {
@@ -178,6 +179,8 @@ func (vdb *versionedDB) ApplyUpdates(batch *statedb.UpdateBatch, height *version
 					return err
 				}
 				dbBatch.Put(dataKey, encodedVal)
+
+				batchSize += len(dataKey) + len(encodedVal)
 			}
 		}
 	}
@@ -187,6 +190,7 @@ func (vdb *versionedDB) ApplyUpdates(batch *statedb.UpdateBatch, height *version
 	// in the pvtstore acts as a savepoint for pvt data.
 	if height != nil {
 		dbBatch.Put(savePointKey, height.ToBytes())
+		logger.Infof("Block [%d]: applied batch size: %d bytes", height.BlockNum, batchSize)
 	}
 	// Setting snyc to true as a precaution, false may be an ok optimization after further testing.
 	if err := vdb.db.WriteBatch(dbBatch, true); err != nil {

@@ -222,6 +222,7 @@ func (d *Deliverer) processMsg(msg *orderer.DeliverResponse) error {
 
 		return errors.Errorf("received bad status %v from orderer", t.Status)
 	case *orderer.DeliverResponse_Block:
+		milliTimestamp := time.Now().UnixNano() / int64(time.Millisecond)
 		blockNum := t.Block.Header.Number
 		if err := d.BlockVerifier.VerifyBlock(gossipcommon.ChannelID(d.ChannelID), blockNum, t.Block); err != nil {
 			return errors.WithMessage(err, "block from orderer could not be verified")
@@ -250,7 +251,7 @@ func (d *Deliverer) processMsg(msg *orderer.DeliverResponse) error {
 			},
 		}
 
-		d.Logger.Debugf("Adding payload to local buffer, blockNum = [%d]", blockNum)
+		d.Logger.Infof("Adding payload to local buffer, blockNum = [%d] at Unix timestamp %dms", blockNum, milliTimestamp)
 		// Add payload to local state payloads buffer
 		if err := d.Gossip.AddPayload(d.ChannelID, payload); err != nil {
 			d.Logger.Warningf("Block [%d] received from ordering service wasn't added to payload buffer: %v", blockNum, err)

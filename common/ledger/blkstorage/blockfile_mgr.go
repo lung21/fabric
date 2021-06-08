@@ -291,6 +291,9 @@ func (mgr *blockfileMgr) addBlock(block *common.Block) error {
 	if err != nil {
 		return errors.WithMessage(err, "error serializing block")
 	}
+
+	logger.Infof("Appended block [%d] size: %d bytes", block.Header.Number, len(blockBytes))
+
 	blockHash := protoutil.BlockHeaderHash(block.Header)
 	//Get the location / offset where each transaction starts in the block and where the block ends
 	txOffsets := info.txOffsets
