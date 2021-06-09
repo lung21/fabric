@@ -587,7 +587,7 @@ func (s *GossipStateProviderImpl) deliverPayloads() {
 
 				elapsedBlockProcessing := time.Since(startBlockProcessing)
 
-				s.logger.Infof("Processed blcok [%d] in %dms", payload.SeqNum, elapsedBlockProcessing)
+				s.logger.Infof("Processed block [%d] in %dms", payload.SeqNum, elapsedBlockProcessing)
 
 				milliTimestamp := time.Now().UnixNano() / int64(time.Millisecond)
 				s.logger.Infof("Finished committing block [%d] at Unix timestamp %dms\n", payload.SeqNum, milliTimestamp)
