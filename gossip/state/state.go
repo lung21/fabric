@@ -574,6 +574,9 @@ func (s *GossipStateProviderImpl) deliverPayloads() {
 						continue
 					}
 				}
+
+				startBlockProcessing := time.Now()
+
 				if err := s.commitBlock(rawBlock, p); err != nil {
 					if executionErr, isExecutionErr := err.(*vsccErrors.VSCCExecutionFailureError); isExecutionErr {
 						s.logger.Errorf("Failed executing VSCC due to %v. Aborting chain processing", executionErr)
@@ -581,6 +584,10 @@ func (s *GossipStateProviderImpl) deliverPayloads() {
 					}
 					s.logger.Panicf("Cannot commit block to the ledger due to %+v", errors.WithStack(err))
 				}
+
+				elapsedBlockProcessing := time.Since(startBlockProcessing)
+
+				s.logger.Infof("Processed blcok [%d] in %dms", payload.SeqNum, elapsedBlockProcessing)
 
 				milliTimestamp := time.Now().UnixNano() / int64(time.Millisecond)
 				s.logger.Infof("Finished committing block [%d] at Unix timestamp %dms\n", payload.SeqNum, milliTimestamp)
