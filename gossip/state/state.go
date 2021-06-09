@@ -585,7 +585,7 @@ func (s *GossipStateProviderImpl) deliverPayloads() {
 					s.logger.Panicf("Cannot commit block to the ledger due to %+v", errors.WithStack(err))
 				}
 
-				elapsedBlockProcessing := time.Since(startBlockProcessing)
+				elapsedBlockProcessing := time.Since(startBlockProcessing) / time.Millisecond
 
 				s.logger.Infof("Processed block [%d] in %dms", payload.SeqNum, elapsedBlockProcessing)
 
